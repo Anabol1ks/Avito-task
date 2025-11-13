@@ -7,6 +7,7 @@ import (
 	"reviewer_pr/internal/logger"
 
 	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -24,4 +25,8 @@ func main() {
 
 	db := database.ConnectDB(&cfg.DB, log)
 	defer database.CloseDB(db, log)
+
+	if err := database.AutoMigrate(db, log); err != nil {
+		log.Fatal("ошибка запуска автомиграции", zap.Error(err))
+	}
 }
