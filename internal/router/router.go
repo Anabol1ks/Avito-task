@@ -3,6 +3,7 @@ package router
 import (
 	"net/http"
 	"reviewer_pr/api"
+	httpapi "reviewer_pr/internal/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -11,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func Router(log *zap.Logger) *gin.Engine {
+func Router(h *httpapi.Handler, log *zap.Logger) *gin.Engine {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
@@ -22,6 +23,10 @@ func Router(log *zap.Logger) *gin.Engine {
 		AllowCredentials: true,
 	}))
 
+	r.GET("/health", func(c *gin.Context) {
+		c.String(200, "ok")
+	})
+
 	r.GET("/openapi.yml", func(c *gin.Context) {
 		c.Data(http.StatusOK, "application/x-yaml", api.OpenAPISpec)
 	})
@@ -30,5 +35,16 @@ func Router(log *zap.Logger) *gin.Engine {
 		swaggerFiles.Handler,
 		ginSwagger.URL("/openapi.yml"),
 	))
+
+	r.POST("/team/add", h.TeamAdd)
+	r.GET("/team/get", h.TeamGet)
+
+	r.POST("/users/setIsActive", h.UserSetIsActive)
+	r.GET("/users/getReview", h.UserGetReview)
+
+	r.POST("/pullRequest/create", h.PRCreate)
+	r.POST("/pullRequest/merge", h.PRMerge)
+	r.POST("/pullRequest/reassign", h.PRReassign)
+
 	return r
 }

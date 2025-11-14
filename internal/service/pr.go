@@ -17,6 +17,7 @@ type PRService interface {
 	Merge(ctx context.Context, prID string) (*models.PullRequest, error)
 	ReassignReviewer(ctx context.Context, in ReassignInput) (*ReassignOutput, error)
 	GetReviewsByUser(ctx context.Context, reviewerID string) ([]models.PullRequest, error)
+	GetReviewersForPR(ctx context.Context, prID string) ([]models.PRReviewer, error)
 }
 
 type prService struct {
@@ -242,4 +243,8 @@ func (s *prService) GetReviewsByUser(ctx context.Context, reviewerID string) ([]
 		return nil, err
 	}
 	return prs, nil
+}
+
+func (s *prService) GetReviewersForPR(ctx context.Context, prID string) ([]models.PRReviewer, error) {
+	return s.repo.PRs.GetReviewersForPR(ctx, prID)
 }

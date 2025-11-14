@@ -9,6 +9,7 @@ import (
 type Config struct {
 	Port string
 	DB   DB
+	Auth AuthConfig
 }
 
 type DB struct {
@@ -18,6 +19,11 @@ type DB struct {
 	Password string
 	Name     string
 	SSLMode  string
+}
+
+type AuthConfig struct {
+	AdminToken string
+	UserToken  string
 }
 
 func Load(log *zap.Logger) *Config {
@@ -30,6 +36,10 @@ func Load(log *zap.Logger) *Config {
 			Password: getEnv("DB_PASSWORD", "12341", log),
 			Name:     getEnv("DB_NAME", "reviewer-pr-db", log),
 			SSLMode:  getEnv("DB_SSLMODE", "disable", log),
+		},
+		Auth: AuthConfig{
+			AdminToken: getEnv("ADMIN_TOKEN", "admin-token", log),
+			UserToken:  getEnv("USER_TOKEN", "user-token", log),
 		},
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"os"
 	"reviewer_pr/internal/config"
 	"reviewer_pr/internal/database"
+	httpapi "reviewer_pr/internal/http"
 	"reviewer_pr/internal/logger"
 	"reviewer_pr/internal/repository"
 	"reviewer_pr/internal/router"
@@ -33,11 +34,11 @@ func main() {
 		log.Fatal("ошибка запуска автомиграции", zap.Error(err))
 	}
 
-	repo := repository.New(db)
-	services := service.New(repo, log)
-	_ = services
+	repos := repository.New(db)
+	services := service.New(repos, log)
+	handlers := httpapi.New(services, log)
 
-	r := router.Router(log)
+	r := router.Router(handlers, log)
 	port := ":" + cfg.Port
 	if err := r.Run(port); err != nil {
 		log.Fatal("failed to run http server", zap.Error(err))

@@ -61,7 +61,7 @@ func (r *prRepo) GetPullRequestWithReviewers(ctx context.Context, id string) (*m
 }
 
 func (r *prRepo) SetPullRequestMerged(ctx context.Context, id string, mergedAt time.Time) (bool, error) {
-	res := r.db.WithContext(ctx).Model(&models.PullRequest{}).Where("pull_request_id = ? AND status = ", id, models.PRStatusOpen).Updates(map[string]any{
+	res := r.db.WithContext(ctx).Model(&models.PullRequest{}).Where("pull_request_id = ? AND status = ?", id, models.PRStatusOpen).Updates(map[string]any{
 		"status":    models.PRStatusMerged,
 		"merged_at": mergedAt,
 	})
@@ -91,7 +91,7 @@ func (r *prRepo) AddReviewers(ctx context.Context, prID string, reviewerIDs []st
 
 func (r *prRepo) ReplaceReviewer(ctx context.Context, prID, oldID, newID string) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err := tx.WithContext(ctx).Where("pull_request_id = ? AND reviewer_id", prID, oldID).Delete(&models.PRReviewer{}).Error; err != nil {
+		if err := tx.WithContext(ctx).Where("pull_request_id = ? AND reviewer_id = ?", prID, oldID).Delete(&models.PRReviewer{}).Error; err != nil {
 			return err
 		}
 		reviewer := models.PRReviewer{
