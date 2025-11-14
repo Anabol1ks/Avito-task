@@ -7,6 +7,7 @@ import (
 	"reviewer_pr/internal/logger"
 	"reviewer_pr/internal/repository"
 	"reviewer_pr/internal/router"
+	"reviewer_pr/internal/service"
 
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
@@ -33,7 +34,8 @@ func main() {
 	}
 
 	repo := repository.New(db)
-	_ = repo
+	services := service.New(repo, log)
+	_ = services
 
 	r := router.Router(log)
 	port := ":" + cfg.Port
