@@ -12,6 +12,7 @@ import (
 
 type TeamService interface {
 	AddTeam(ctx context.Context, in CreateTeamInput) (*TeamWithMembers, error)
+	GetTeam(ctx context.Context, teamName string) (*TeamWithMembers, error)
 }
 
 type teamService struct {
