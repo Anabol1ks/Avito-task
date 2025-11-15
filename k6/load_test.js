@@ -15,11 +15,11 @@ const BASE_URL = 'http://localhost:8080'
 
 const users = new SharedArray('users', function () {
 	return [
-		{ id: 'u1', username: 'user1' },
-		{ id: 'u2', username: 'user2' },
-		{ id: 'u3', username: 'user3' },
-		{ id: 'u4', username: 'user4' },
-		{ id: 'u5', username: 'user5' },
+		{ id: 'u1t', username: 'user1' },
+		{ id: 'u2t', username: 'user2' },
+		{ id: 'u3t', username: 'user3' },
+		{ id: 'u4t', username: 'user4' },
+		{ id: 'u5t', username: 'user5' },
 	]
 })
 
