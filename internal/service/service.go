@@ -10,6 +10,7 @@ type Services struct {
 	Teams TeamService
 	Users UserService
 	PRs   PRService
+	Stats StatsService
 }
 
 func New(repo *repository.Repository, log *zap.Logger) *Services {
@@ -21,5 +22,6 @@ func buildServices(repo *repository.Repository, log *zap.Logger) *Services {
 		Teams: NewTeamService(repo, log),
 		Users: NewUserService(repo, log),
 		PRs:   NewPRService(repo, log),
+		Stats: NewStatsService(repo, log),
 	}
 }

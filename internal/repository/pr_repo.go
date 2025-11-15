@@ -17,6 +17,8 @@ type PRRepo interface {
 	ReplaceReviewer(ctx context.Context, prID, oldID, newID string) error
 	GetPullRequestsByReviewer(ctx context.Context, reviewerID string) ([]models.PullRequest, error)
 	GetReviewersForPR(ctx context.Context, prID string) ([]models.PRReviewer, error)
+	GetUserReviewStats(ctx context.Context) ([]UserReviewStats, error)
+	GetPRReviewStats(ctx context.Context) ([]PRReviewStats, error)
 }
 
 type prRepo struct {
@@ -124,4 +126,54 @@ func (r *prRepo) GetReviewersForPR(ctx context.Context, prID string) ([]models.P
 		return nil, err
 	}
 	return reviewers, nil
+}
+
+type UserReviewStats struct {
+	UserID      string
+	Username    string
+	TeamName    string
+	ReviewCount int64
+}
+
+type PRReviewStats struct {
+	PullRequestID string
+	ReviewerCount int64
+}
+
+func (r *prRepo) GetUserReviewStats(ctx context.Context) ([]UserReviewStats, error) {
+	var rows []UserReviewStats
+
+	err := r.db.WithContext(ctx).
+		Table("pr_reviewers").
+		Select(`
+			pr_reviewers.reviewer_id AS user_id,
+			users.username AS username,
+			users.team_name AS team_name,
+			COUNT(*) AS review_count`,
+		).
+		Joins("JOIN users ON users.user_id = pr_reviewers.reviewer_id").
+		Group("pr_reviewers.reviewer_id, users.username, users.team_name").
+		Scan(&rows).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
+}
+
+func (r *prRepo) GetPRReviewStats(ctx context.Context) ([]PRReviewStats, error) {
+	var rows []PRReviewStats
+
+	err := r.db.WithContext(ctx).
+		Table("pr_reviewers").
+		Select("pull_request_id, COUNT(*) AS reviewer_count").
+		Group("pull_request_id").
+		Scan(&rows).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
 }

@@ -46,5 +46,7 @@ func Router(h *httpapi.Handler, log *zap.Logger) *gin.Engine {
 	r.POST("/pullRequest/merge", h.PRMerge)
 	r.POST("/pullRequest/reassign", h.PRReassign)
 
+	r.GET("/stats", h.GetStats)
+
 	return r
 }

@@ -37,3 +37,20 @@ type PullRequestShortDTO struct {
 	AuthorID        string `json:"author_id"`
 	Status          string `json:"status"`
 }
+
+type UserStatsDTO struct {
+	UserID      string `json:"user_id"`
+	Username    string `json:"username"`
+	TeamName    string `json:"team_name"`
+	ReviewCount int64  `json:"review_count"`
+}
+
+type PRStatsDTO struct {
+	PullRequestID string `json:"pull_request_id"`
+	ReviewerCount int64  `json:"reviewer_count"`
+}
+
+type StatsResponseDTO struct {
+	ByUser []UserStatsDTO `json:"by_user"`
+	ByPR   []PRStatsDTO   `json:"by_pr"`
+}

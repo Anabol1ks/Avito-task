@@ -7,7 +7,7 @@ tags:
   - name: Teams
   - name: Users
   - name: PullRequests
-  - name: Health
+  - name: Stats
 
 components:
   parameters:
@@ -120,6 +120,44 @@ components:
         status:
           type: string
           enum: [OPEN, MERGED]
+      example:
+        error:
+          code: NOT_FOUND
+          message: resource not found
+    UserStats:
+      type: object
+      required: [user_id, username, team_name, review_count]
+      properties:
+        user_id:
+          type: string
+        username:
+          type: string
+        team_name:
+          type: string
+        review_count:
+          type: integer
+          format: int64
+    PRStats:
+      type: object
+      required: [pull_request_id, reviewer_count]
+      properties:
+        pull_request_id:
+          type: string
+        reviewer_count:
+          type: integer
+          format: int64
+    StatsResponse:
+      type: object
+      required: [by_user, by_pr]
+      properties:
+        by_user:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserStats'
+        by_pr:
+          type: array
+          items:
+            $ref: '#/components/schemas/PRStats'
 
 paths:
   /team/add:
@@ -419,3 +457,29 @@ paths:
                     pull_request_name: Add search
                     author_id: u1
                     status: OPEN
+  /stats:
+    get:
+      tags: [Stats]
+      summary: Получить статистику по ревью
+      responses:
+        '200':
+          description: Статистика по ревью
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsResponse'
+              example:
+                by_user:
+                  - user_id: u1
+                    username: Alice
+                    team_name: backend
+                    review_count: 5
+                  - user_id: u2
+                    username: Bob
+                    team_name: backend
+                    review_count: 3
+                by_pr:
+                  - pull_request_id: pr-1001
+                    reviewer_count: 2
+                  - pull_request_id: pr-1002
+                    reviewer_count: 1
