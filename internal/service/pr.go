@@ -30,7 +30,7 @@ func NewPRService(repo *repository.Repository, log *zap.Logger) PRService {
 	return &prService{
 		repo: repo,
 		log:  log,
-		rnd:  rand.New(rand.NewSource(time.Now().UnixNano())),
+		rnd:  rand.New(rand.NewSource(time.Now().UnixNano())), //nolint:gosec
 	}
 }
 
@@ -48,7 +48,7 @@ type CreatePROutput struct {
 func (s *prService) CreateWithAutoAssign(ctx context.Context, in CreatePRInput) (*CreatePROutput, error) {
 	var out *CreatePROutput
 
-	err := s.repo.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := s.repo.DB.WithContext(ctx).Transaction(func(_ *gorm.DB) error {
 		if existing, err := s.repo.PRs.GetPullRequestByID(ctx, in.ID); err != nil && existing != nil {
 			return NewErr(ErrorCodePRExists, "pull request already exists")
 		} else if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -103,8 +103,8 @@ func (s *prService) CreateWithAutoAssign(ctx context.Context, in CreatePRInput) 
 	return out, nil
 }
 
-func pickReviewers(r *rand.Rand, users []models.User, max int) []models.User {
-	if len(users) == 0 || max <= 0 {
+func pickReviewers(r *rand.Rand, users []models.User, maxС int) []models.User {
+	if len(users) == 0 || maxС <= 0 {
 		return nil
 	}
 	cpy := make([]models.User, len(users))
@@ -114,8 +114,8 @@ func pickReviewers(r *rand.Rand, users []models.User, max int) []models.User {
 		cpy[i], cpy[j] = cpy[j], cpy[i]
 	})
 
-	if len(cpy) > max {
-		cpy = cpy[:max]
+	if len(cpy) > maxС {
+		cpy = cpy[:maxС]
 	}
 	return cpy
 }
@@ -154,7 +154,7 @@ type ReassignOutput struct {
 func (s *prService) ReassignReviewer(ctx context.Context, in ReassignInput) (*ReassignOutput, error) {
 	var out *ReassignOutput
 
-	err := s.repo.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := s.repo.DB.WithContext(ctx).Transaction(func(_ *gorm.DB) error {
 		pr, err := s.repo.PRs.GetPullRequestByID(ctx, in.PRID)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {

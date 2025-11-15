@@ -43,7 +43,7 @@ type TeamWithMembers struct {
 func (s *teamService) AddTeam(ctx context.Context, in CreateTeamInput) (*TeamWithMembers, error) {
 	var result *TeamWithMembers
 
-	err := s.repo.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := s.repo.DB.WithContext(ctx).Transaction(func(_ *gorm.DB) error {
 		existing, err := s.repo.Teams.GetTeamByName(ctx, in.TeamName)
 		if err == nil && existing != nil {
 			return NewErr(ErrorCodeTeamExists, "team already exists")

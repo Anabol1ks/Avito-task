@@ -29,7 +29,9 @@ func SetupTestDB(t *testing.T) *gorm.DB {
 	t.Cleanup(func() {
 		sqlDB, err := db.DB()
 		if err == nil {
-			sqlDB.Close()
+			if closeErr := sqlDB.Close(); closeErr != nil {
+				t.Logf("failed to close test database: %v", closeErr)
+			}
 		}
 	})
 

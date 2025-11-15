@@ -9,10 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"go.uber.org/zap"
 )
 
-func Router(h *httpapi.Handler, log *zap.Logger) *gin.Engine {
+func Router(h *httpapi.Handler) *gin.Engine {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{

@@ -25,7 +25,7 @@ func TestHandlers_FullWorkflow(t *testing.T) {
 	log := zap.NewNop()
 	services := service.New(repo, log)
 	handler := httpapi.New(services, log)
-	r := router.Router(handler, log)
+	r := router.Router(handler)
 
 	// Шаг 1: Создаем команду
 	teamPayload := map[string]interface{}{
@@ -187,7 +187,7 @@ func TestHandlers_UserDeactivation(t *testing.T) {
 	log := zap.NewNop()
 	services := service.New(repo, log)
 	handler := httpapi.New(services, log)
-	r := router.Router(handler, log)
+	r := router.Router(handler)
 
 	// Создаем команду
 	teamPayload := map[string]interface{}{
@@ -261,7 +261,7 @@ func TestHandlers_GetStats(t *testing.T) {
 	log := zap.NewNop()
 	services := service.New(repo, log)
 	handler := httpapi.New(services, log)
-	r := router.Router(handler, log)
+	r := router.Router(handler)
 
 	// Создаем команду
 	teamPayload := map[string]interface{}{
@@ -321,7 +321,7 @@ func TestHandlers_GetUserReviews(t *testing.T) {
 	log := zap.NewNop()
 	services := service.New(repo, log)
 	handler := httpapi.New(services, log)
-	r := router.Router(handler, log)
+	r := router.Router(handler)
 
 	// Создаем команду
 	teamPayload := map[string]interface{}{
@@ -380,7 +380,7 @@ func TestHandlers_ErrorCases(t *testing.T) {
 	log := zap.NewNop()
 	services := service.New(repo, log)
 	handler := httpapi.New(services, log)
-	r := router.Router(handler, log)
+	r := router.Router(handler)
 
 	t.Run("Team already exists", func(t *testing.T) {
 		teamPayload := map[string]interface{}{

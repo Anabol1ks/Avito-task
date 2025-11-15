@@ -10,3 +10,9 @@ doc-rebuild:
 .PHONY: test
 test:
 	go test -v ./test/... -count=1
+
+k6-test:
+	k6 run k6/load_test.js
+
+lint:
+	golangci-lint run ./... -v

@@ -38,7 +38,7 @@ func main() {
 	services := service.New(repos, log)
 	handlers := httpapi.New(services, log)
 
-	r := router.Router(handlers, log)
+	r := router.Router(handlers)
 	port := ":" + cfg.Port
 	if err := r.Run(port); err != nil {
 		log.Fatal("failed to run http server", zap.Error(err))
