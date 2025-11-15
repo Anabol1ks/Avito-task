@@ -6,3 +6,7 @@ doc:
 
 doc-rebuild:
 	docker-compose up -d --build app
+
+.PHONY: test
+test:
+	go test -v ./test/... -count=1

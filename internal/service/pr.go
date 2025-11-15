@@ -130,7 +130,7 @@ func (s *prService) Merge(ctx context.Context, prID string) (*models.PullRequest
 	}
 
 	if pr.Status == models.PRStatusMerged {
-		return pr, nil
+		return nil, NewErr(ErrorCodePRMerged, "pull request already merged")
 	}
 
 	_, err = s.repo.PRs.SetPullRequestMerged(ctx, prID, time.Now().UTC())
@@ -197,15 +197,13 @@ func (s *prService) ReassignReviewer(ctx context.Context, in ReassignInput) (*Re
 			return err
 		}
 
-		if otherReviewerID != "" {
-			filtered := candidates[:0]
-			for _, c := range candidates {
-				if c.ID != otherReviewerID {
-					filtered = append(filtered, c)
-				}
+		filtered := candidates[:0]
+		for _, c := range candidates {
+			if c.ID != pr.AuthorID && c.ID != otherReviewerID {
+				filtered = append(filtered, c)
 			}
-			candidates = filtered
 		}
+		candidates = filtered
 
 		if len(candidates) == 0 {
 			return NewErr(ErrorCodeNoCandidate, "no active candidate in reviewer team")

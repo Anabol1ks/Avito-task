@@ -45,7 +45,7 @@ func (s *teamService) AddTeam(ctx context.Context, in CreateTeamInput) (*TeamWit
 
 	err := s.repo.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		existing, err := s.repo.Teams.GetTeamByName(ctx, in.TeamName)
-		if err != nil && existing != nil {
+		if err == nil && existing != nil {
 			return NewErr(ErrorCodeTeamExists, "team already exists")
 		}
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
